@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌾 YieldWise - Crop Yield Prediction</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <span class="logo-icon">🌾</span>
+                YieldWise
+            </div>
+            <div class="nav-status" id="healthStatus">
+                <span class="status-dot"></span>
+                <span id="statusText">Checking...</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <h3>🔧 Quick Info</h3>
+                <div id="modelInfo" class="info-box">
+                    <p>Loading...</p>
+                </div>
+            </div>
+            <div class="sidebar-section">
+                <h3>📊 Recent Predictions</h3>
+                <div id="recentPredictions" class="recent-list">
+                    <p class="empty-state">No predictions yet</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="page-header">
+                <h1>🌾 Crop Yield Prediction</h1>
+                <p>Enter agricultural parameters to predict your crop yield</p>
+            </header>
+
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="tab-button active" data-tab="prediction">
+                    📈 Prediction
+                </button>
+                <button class="tab-button" data-tab="info">
+                    ℹ️ Model Info
+                </button>
+                <button class="tab-button" data-tab="docs">
+                    📚 API Docs
+                </button>
+            </div>
+
+            <!-- Tab Content -->
+            <div class="tab-content">
+                <!-- Prediction Tab -->
+                <div id="prediction-tab" class="tab-pane active">
+                    <div class="form-alert">
+                        <p>⚠️ <strong>All fields marked with * are required</strong> for accurate predictions</p>
+                    </div>
+                    
+                    <form id="predictionForm" class="prediction-form">
+                        <!-- Categorical Section -->
+                        <fieldset class="form-fieldset">
+                            <legend>🌍 Crop Information (REQUIRED)</legend>
+                            <div class="form-alert">
+                                <p>✅ <strong>Government Data Model v1</strong> - Uses only official agricultural statistics from data.gov.in</p>
+                            </div>
+
+                            <!-- Agricultural Information Section -->
+                            <fieldset class="form-fieldset">
+                                <legend>🌍 Agricultural Information</legend>
+                            
+                                <div class="form-group">
+                                    <label for="state">State <span class="required">*</span></label>
+                                    <select id="state" name="state" required>
+                                        <option value="">Select State...</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="district">District <span class="required">*</span></label>
+                                    <select id="district" name="district" required>
+                                        <option value="">Select District...</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="crop">Crop Type <span class="required">*</span></label>
+                                        <select id="crop" name="crop" required>
+                                            <option value="">Select Crop...</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="season">Season <span class="required">*</span></label>
+                                        <select id="season" name="season" required>
+                                            <option value="">Select Season...</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </fieldset>
+
+                            <!-- Cultivation Details Section -->
+                            <fieldset class="form-fieldset">
+                                <legend>📊 Cultivation Details</legend>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="year">Year <span class="required">*</span></label>
+                                        <input type="number" id="year" name="year" min="1997" max="2024" value="2014" required>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="area">Cultivated Area (hectares) <span class="required">*</span></label>
+                                        <input type="number" id="area" name="area" step="0.1" min="0.1" placeholder="50000" required>
+                                    </div>
+                                </div>
+                            </fieldset>
+
+                        <!-- Submit Button -->
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary" id="submitBtn">
+                                📊 Predict Yield
+                            </button>
+                            <button type="reset" class="btn btn-secondary">
+                                🔄 Clear Form
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Results -->
+                    <div id="resultContainer" class="result-container" style="display: none;">
+                        <div class="result-card">
+                            <h2>🎯 Prediction Result</h2>
+                            
+                            <div class="result-highlight">
+                                <div class="result-value" id="resultYield">-</div>
+                                <div class="result-unit">tonnes/ha</div>
+                            </div>
+
+                            <div class="result-summary" id="resultSummary">
+                                <!-- Filled by JavaScript -->
+                            </div>
+
+                            <div class="result-metadata" id="resultMetadata">
+                                <!-- Filled by JavaScript -->
+                            </div>
+
+                            <button class="btn btn-secondary" onclick="document.getElementById('resultContainer').style.display = 'none';">
+                                ✕ Close
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Error Message -->
+                    <div id="errorContainer" class="error-container" style="display: none;">
+                        <div class="error-message" id="errorText">
+                            <!-- Filled by JavaScript -->
+                        </div>
+                    </div>
+
+                    <!-- Loading Spinner -->
+                    <div id="loadingContainer" class="loading-container" style="display: none;">
+                        <div class="spinner"></div>
+                        <p>Predicting yield...</p>
+                    </div>
+                </div>
+
+                <!-- Model Info Tab -->
+                <div id="info-tab" class="tab-pane">
+                    <div class="info-container" id="modelInfoFull">
+                        <p>Loading...</p>
+                    </div>
+                </div>
+
+                <!-- Docs Tab -->
+                <div id="docs-tab" class="tab-pane">
+                    <div class="docs-container">
+                        <h2>📚 API Documentation</h2>
+                        <p>Access the interactive API documentation:</p>
+                        <ul>
+                            <li><a href="/docs" target="_blank">📖 Swagger UI</a> - Interactive API explorer</li>
+                            <li><a href="/redoc" target="_blank">📕 ReDoc</a> - Beautiful API documentation</li>
+                        </ul>
+
+                        <h3>Example Prediction Request</h3>
+                        <pre><code>POST /predict-yield
+{
+  "state": "Punjab",
+  "district": "Ludhiana",
+  "crop": "rice",
+  "season": "kharif",
+  "year": 2024,
+  "area": 50.0,
+  "rainfall": 800.0,
+  "seasonal_rainfall": 750.0,
+  "temperature": 28.0,
+  "humidity": 75.0,
+  "soil_ph": 6.8,
+  "fertilizer": 150.0,
+  "pesticide": 5.0
+}</code></pre>
+
+                        <h3>Health Check Endpoint</h3>
+                        <pre><code>GET /
+Response:
+{
+  "status": "healthy",
+  "model_loaded": true,
+  "model_path": "..."
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>🌾 YieldWise v1.0 | Crop Yield Prediction AI | <span id="currentYear"></span></p>
+    </footer>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>

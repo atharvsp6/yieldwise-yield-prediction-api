@@ -1,0 +1,25 @@
+{
+  "categorical_features": [
+    "state",
+    "district",
+    "crop",
+    "season"
+  ],
+  "numerical_features": [
+    "year",
+    "area"
+  ],
+  "all_features": [
+    "state",
+    "district",
+    "crop",
+    "season",
+    "year",
+    "area"
+  ],
+  "target": "yield",
+  "best_model": "XGBRegressor",
+  "r2": 0.8899837369782474,
+  "rmse": 4.738030810825707,
+  "mae": 1.5761952850449796
+}
